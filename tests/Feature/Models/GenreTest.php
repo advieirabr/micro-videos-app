@@ -37,17 +37,17 @@ class GenreTest extends TestCase
         $this->assertEquals('test1', $genre->name);
         $this->assertTrue($genre->is_active);
 
-        $category = Genre::create([
+        $genre = Genre::create([
             'name' => 'test1',
             'is_active' => false
         ]);
-        $this->assertFalse($category->is_active);
+        $this->assertFalse($genre->is_active);
 
-        $category = Genre::create([
+        $genre = Genre::create([
             'name' => 'test1',
             'is_active' => true
         ]);
-        $this->assertTrue($category->is_active);
+        $this->assertTrue($genre->is_active);
 
 
 
