@@ -145,10 +145,12 @@ class CategoryControllerTest extends TestCase
                 'is_active' => true
             ]);
 
+
         $response = $this->json('PUT',route('categories.update', ['category' => $category->id]),[
             'name' => 'test',
             'description' => ''
         ]);
+
 
         $response->
             assertJsonFragment([
