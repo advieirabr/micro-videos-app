@@ -7,6 +7,8 @@ composer install
 php artisan route:clear
 php artisan config:clear
 php artisan cache:clear
+php artisan key:generate
+php artisan migrate
 
 
 
