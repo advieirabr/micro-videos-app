@@ -34,6 +34,11 @@ class CategoryTest extends TestCase
         ]);
         $category->refresh();
         $this->assertEquals(36, strlen($category->id));
+        $this->assertEquals(4,substr_count($category->id, '-'));
+        $this->assertEquals('-',substr($category->id, 8,1));
+        $this->assertEquals('-',substr($category->id, 13,1));
+        $this->assertEquals('-',substr($category->id, 18,1));
+        $this->assertEquals('-',substr($category->id, 23,1));
         $this->assertEquals('test1', $category->name);
         $this->assertNull($category->description);
         $this->assertTrue($category->is_active);

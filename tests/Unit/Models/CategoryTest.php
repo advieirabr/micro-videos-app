@@ -29,6 +29,7 @@ class CategoryTest extends TestCase
         $this->category = new Category();
 
     }
+
 //    executado ao fim de cada assertion do teste
     protected function tearDown(): void
     {
@@ -79,9 +80,9 @@ class CategoryTest extends TestCase
     public function testDatesAttribute()
     {
         $dates = ['deleted_at', 'created_at', 'updated_at'];
-        foreach ($dates as $date){
+        foreach ($dates as $date) {
             $this->assertContains($date, $this->category->getDates());
         }
-        $this->assertCount(count($dates),$this->category->getDates());
+        $this->assertCount(count($dates), $this->category->getDates());
     }
 }

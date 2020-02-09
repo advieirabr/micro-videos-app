@@ -10,6 +10,7 @@ services:
             - .:/var/www
         networks:
             - app-network
+        user: ${CURRENT_UID}
         depends_on:
             - db
             - redis
