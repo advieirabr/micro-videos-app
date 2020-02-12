@@ -30,7 +30,8 @@ class CategoryTest extends TestCase
     public function testCreate()
     {
         $category = Category::create([
-           'name' => 'test1'
+           'name' => 'test1',
+
         ]);
         $category->refresh();
         $this->assertEquals(36, strlen($category->id));

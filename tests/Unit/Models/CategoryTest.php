@@ -79,7 +79,7 @@ class CategoryTest extends TestCase
 
     public function testDatesAttribute()
     {
-        $dates = ['deleted_at', 'created_at', 'updated_at'];
+        $dates = ['deleted_ata', 'created_at', 'updated_at'];
         foreach ($dates as $date) {
             $this->assertContains($date, $this->category->getDates());
         }

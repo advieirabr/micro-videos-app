@@ -10,7 +10,7 @@ services:
             - .:/var/www
         networks:
             - app-network
-        user: ${CURRENT_UID}
+#        user: ${CURRENT_UID}
         depends_on:
             - db
             - redis
@@ -57,3 +57,4 @@ services:
 networks:
     app-network:
         driver: bridge
+
