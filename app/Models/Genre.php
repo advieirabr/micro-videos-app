@@ -17,4 +17,5 @@ class Genre extends Model
     ];
 
     public $incrementing = false;
+
 }
