@@ -3,13 +3,17 @@
 namespace Tests\Feature\Http\Controllers\Api;
 
 
+use App\Http\Controllers\Api\VideoController;
 use App\Models\Category;
 use App\Models\Genre;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Http\Request;
+use Tests\Exceptions\TestException;
 use Tests\TestCase;
 use Tests\Traits\TestSaves;
 use Tests\Traits\TestValidations;
+use function Couchbase\fastlzCompress;
 
 class VideoControllerTest extends TestCase
 {
@@ -172,13 +176,55 @@ class VideoControllerTest extends TestCase
 
     public function testStore()
     {
-        $response = $this->assertStore($this->sendData, $this->sendData + ['opened' => false]);
+        $category = factory(Category::class)->create();
+        $genre = factory(Genre::class)->create();
+        $response = $this->assertStore($this->sendData + ['categories_id' => [$category->id], 'genres_id' => [$genre->id]],
+            $this->sendData + ['opened' => false]);
         $response->assertJsonStructure([
             'created_at', 'updated_at'
         ]);
 
-        $this->assertStore($this->sendData + ['opened' => true], $this->sendData + ['opened' => true]);
-        $this->assertStore($this->sendData + ['rating' => Video::RATING_LIST[1]], $this->sendData + ['rating' => Video::RATING_LIST[1]]);
+        $category = factory(Category::class)->create();
+        $genre = factory(Genre::class)->create();
+        $this->assertStore($this->sendData + ['opened' => true, 'categories_id' => [$category->id], 'genres_id' => [$genre->id]], $this->sendData + ['opened' => true]);
+
+        $category = factory(Category::class)->create();
+        $genre = factory(Genre::class)->create();
+        $this->assertStore($this->sendData + ['rating' => Video::RATING_LIST[1], 'categories_id' => [$category->id], 'genres_id' => [$genre->id]], $this->sendData + ['rating' => Video::RATING_LIST[1]]);
+
+    }
+
+    public function testRollBackStore(){
+
+        $controller = \Mockery::mock(VideoController::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+
+        $controller->shouldReceive('validate')
+            ->withAnyArgs()
+            ->andReturn($this->sendData);
+
+        $controller->shouldReceive('rulesStore')
+            ->withAnyArgs()
+            ->andReturn([]);
+
+        $controller->shouldReceive('handleRelations')
+            ->once()
+            ->andThrow(new TestException());
+
+        $request = \Mockery::mock(Request::class);
+
+
+
+        try {
+            $controller->store($request);
+        }catch (TestException $exception){
+            $this->assertCount(1,Video::all());
+        }
+
+
+
+
 
     }
 
