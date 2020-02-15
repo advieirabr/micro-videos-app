@@ -38,7 +38,6 @@
                   </DockerLinkImpl>
                 </list>
               </option>
-              <option name="networkMode" value="micro-videos-app_app-network" />
               <option name="version" value="1" />
               <option name="volumeBindings">
                 <list>
@@ -54,6 +53,30 @@
         <entry key="e65c9161-5fd5-49f0-bf31-fb14cdb30786">
           <value>
             <DockerContainerSettings>
+              <option name="version" value="1" />
+              <option name="volumeBindings">
+                <list>
+                  <DockerVolumeBindingImpl>
+                    <option name="containerPath" value="/opt/project" />
+                    <option name="hostPath" value="$PROJECT_DIR$" />
+                  </DockerVolumeBindingImpl>
+                </list>
+              </option>
+            </DockerContainerSettings>
+          </value>
+        </entry>
+        <entry key="efe75037-df65-49bb-a945-96b996594546">
+          <value>
+            <DockerContainerSettings>
+              <option name="links">
+                <list>
+                  <DockerLinkImpl>
+                    <option name="alias" value="db" />
+                    <option name="name" value="micro-videos-db" />
+                  </DockerLinkImpl>
+                </list>
+              </option>
+              <option name="networkMode" value="code-micro-videos_app-network" />
               <option name="version" value="1" />
               <option name="volumeBindings">
                 <list>

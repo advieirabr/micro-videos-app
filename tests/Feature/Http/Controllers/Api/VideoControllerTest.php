@@ -128,6 +128,28 @@ class VideoControllerTest extends TestCase
         $this->assertInvalidationStoreAction($data, 'exists');
         $this->assertInvalidationUpdateAction($data, 'exists');
 
+        $category = factory(Category::class)->create();
+        $category->delete();
+
+        $data = [
+            'categories_id' => [$category->id],
+
+        ];
+
+        $this->assertInvalidationStoreAction($data, 'exists');
+        $this->assertInvalidationUpdateAction($data, 'exists');
+
+        $category = factory(Genre::class)->create();
+        $category->delete();
+
+        $data = [
+            'genres_id' => [$category->id],
+
+        ];
+
+        $this->assertInvalidationStoreAction($data, 'exists');
+        $this->assertInvalidationUpdateAction($data, 'exists');
+
     }
 
     public function testInvalidationGenresIdField()
@@ -147,6 +169,7 @@ class VideoControllerTest extends TestCase
 
         $this->assertInvalidationStoreAction($data, 'exists');
         $this->assertInvalidationUpdateAction($data, 'exists');
+
 
     }
 
@@ -178,6 +201,7 @@ class VideoControllerTest extends TestCase
     {
         $category = factory(Category::class)->create();
         $genre = factory(Genre::class)->create();
+
         $response = $this->assertStore($this->sendData + ['categories_id' => [$category->id], 'genres_id' => [$genre->id]],
             $this->sendData + ['opened' => false]);
         $response->assertJsonStructure([
@@ -192,6 +216,21 @@ class VideoControllerTest extends TestCase
         $genre = factory(Genre::class)->create();
         $this->assertStore($this->sendData + ['rating' => Video::RATING_LIST[1], 'categories_id' => [$category->id], 'genres_id' => [$genre->id]], $this->sendData + ['rating' => Video::RATING_LIST[1]]);
 
+
+    }
+
+    public function assertHasCategory($videoId, $categoryId){
+        $this->assertDatabaseHas('category_video',[
+           'video_id' => $videoId,
+           'category_id' => $categoryId
+        ]);
+    }
+
+    public function assertHasGenre($videoId, $genreId){
+        $this->assertDatabaseHas('genre_video',[
+            'video_id' => $videoId,
+            'category_id' => $genreId
+        ]);
     }
 
     public function testRollBackStore(){
@@ -222,27 +261,31 @@ class VideoControllerTest extends TestCase
             $this->assertCount(1,Video::all());
         }
 
-
-
-
-
     }
 
     public function testUpdate()
     {
+        $category = factory(Category::class)->create();
+        $genre = factory(Genre::class)->create();
 
-        $response = $this->assertUpdate($this->sendData, $this->sendData + ['opened' => false]);
+        $response = $this->assertUpdate($this->sendData + ['categories_id' => [$category->id], 'genres_id' => [$genre->id]], $this->sendData + ['opened' => false]);
         $response->assertJsonStructure([
             'created_at', 'updated_at'
         ]);
 
+        $category = factory(Category::class)->create();
+        $genre = factory(Genre::class)->create();
+
         $this->assertUpdate(
-            $this->sendData + ['opened' => true],
+            $this->sendData + ['opened' => true , 'categories_id' => [$category->id], 'genres_id' => [$genre->id]],
             $this->sendData + ['opened' => true]
         );
+
+        $category = factory(Category::class)->create();
+        $genre = factory(Genre::class)->create();
         $this->assertUpdate(
-            $this->sendData + ['rating' => Video::RATING_LIST[1]],
-            $this->sendData + ['rating' => Video::RATING_LIST[1]]
+            $this->sendData + ['rating' => Video::RATING_LIST[1], 'categories_id' => [$category->id], 'genres_id' => [$genre->id]],
+            $this->sendData + ['rating' => Video::RATING_LIST[1], 'opened' => true]
         );
 
     }
