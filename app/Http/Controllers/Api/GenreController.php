@@ -18,7 +18,6 @@ class GenreController extends BasicCrudController
     public function store(Request $request)
     {
         $validatedData = $this->validate($request, $this->rulesStore());
-        /** @var Genre $obj */
         $self = $this;
         $obj = \DB::transaction(function () use ($request, $validatedData, $self) {
 
