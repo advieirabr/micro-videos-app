@@ -22,7 +22,7 @@ class VideosTableSeeder extends Seeder
                 foreach ($subGenres as $genre) {
                     array_push($categoriesId, ...$genre->categories->pluck('id')->toArray());
                 }
-//                $categoriesId = array_unique($categoriesId);
+                $categoriesId = array_unique($categoriesId);
                 $video->categories()->attach($categoriesId);
                 $video->genres()->attach($subGenres->pluck('id')->toArray());
 
