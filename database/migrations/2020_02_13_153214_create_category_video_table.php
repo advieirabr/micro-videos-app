@@ -19,7 +19,7 @@ class CreateCategoryVideoTable extends Migration
             $table->uuid('video_id')->index();
             $table->foreign('video_id')->references('id')->on('videos');
 
-            $table->unique('category_id', 'video_id');
+            $table->unique(['category_id', 'video_id']);
         });
     }
 

@@ -19,7 +19,7 @@ class CreateCategoryGenreTable extends Migration
             $table->uuid('genre_id')->index();
             $table->foreign('genre_id')->references('id')->on('genres');
 
-            $table->unique('category_id', 'genre_id');
+            $table->unique(['category_id', 'genre_id']);
         });
     }
 
