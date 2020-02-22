@@ -25,7 +25,9 @@ class VideoControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->video = factory(Video::class)->create();
+        $this->video = factory(Video::class)->create([
+            'opened' => false
+        ]);
 
         $this->sendData = [
             'title' => 'title',
@@ -33,6 +35,9 @@ class VideoControllerTest extends TestCase
             'year_launched' => 2010,
             'rating' => Video::RATING_LIST[0],
             'duration' => 90,
+//            'categories_id' => '',
+//            'genres_id' => '',
+
         ];
     }
 
@@ -197,98 +202,66 @@ class VideoControllerTest extends TestCase
 
     }
 
-    public function testStore()
-    {
+    public function testSave(){
         $category = factory(Category::class)->create();
         $genre = factory(Genre::class)->create();
 
-        $response = $this->assertStore($this->sendData + ['categories_id' => [$category->id], 'genres_id' => [$genre->id]],
-            $this->sendData + ['opened' => false]);
-        $response->assertJsonStructure([
-            'created_at', 'updated_at'
-        ]);
+        $genre->categories()->sync($category->id);
 
-        $category = factory(Category::class)->create();
-        $genre = factory(Genre::class)->create();
-        $this->assertStore($this->sendData + ['opened' => true, 'categories_id' => [$category->id], 'genres_id' => [$genre->id]], $this->sendData + ['opened' => true]);
+        $data = [
+            [
+                'send_data' => $this->sendData+ [
+                    'categories_id' => [$category->id],
+                    'genres_id' => [$genre->id],
 
-        $category = factory(Category::class)->create();
-        $genre = factory(Genre::class)->create();
-        $this->assertStore($this->sendData + ['rating' => Video::RATING_LIST[1], 'categories_id' => [$category->id], 'genres_id' => [$genre->id]], $this->sendData + ['rating' => Video::RATING_LIST[1]]);
+                    ],
+                'test_data' => $this->sendData + ['opened' => false]
+            ],
+            [
+                'send_data' => $this->sendData + [
+                    'opened' => true,
+                    'categories_id' => [$category->id],
+                    'genres_id' => [$genre->id],
+                    ],
+                'test_data' => $this->sendData + ['opened' => true]
+            ],
+            [
+                'send_data' => $this->sendData + [
+                    'rating' => Video::RATING_LIST[1],
+                    'categories_id' => [$category->id],
+                    'genres_id' => [$genre->id],
+                    ],
+                'test_data' => $this->sendData + ['rating' => Video::RATING_LIST[1]]
+            ]
+        ];
 
+        foreach($data as $key => $value) {
+            $response = $this->assertStore(
+                $value['send_data'], $value['test_data'] + ['deleted_at' => null]
+            );
 
-    }
+            $response->assertJsonStructure([
+                'created_at',
+                'updated_at',
 
-    public function assertHasCategory($videoId, $categoryId){
-        $this->assertDatabaseHas('category_video',[
-           'video_id' => $videoId,
-           'category_id' => $categoryId
-        ]);
-    }
+            ]);
 
-    public function assertHasGenre($videoId, $genreId){
-        $this->assertDatabaseHas('genre_video',[
-            'video_id' => $videoId,
-            'category_id' => $genreId
-        ]);
-    }
+            $response = $this->assertUpdate(
+                $value['send_data'], $value['test_data'] + ['deleted_at' => null]
+            );
 
-    public function testRollBackStore(){
+            $response->assertJsonStructure([
+                'created_at',
+                'updated_at',
 
-        $controller = \Mockery::mock(VideoController::class)
-            ->makePartial()
-            ->shouldAllowMockingProtectedMethods();
+            ]);
 
-        $controller->shouldReceive('validate')
-            ->withAnyArgs()
-            ->andReturn($this->sendData);
-
-        $controller->shouldReceive('rulesStore')
-            ->withAnyArgs()
-            ->andReturn([]);
-
-        $controller->shouldReceive('handleRelations')
-            ->once()
-            ->andThrow(new TestException());
-
-        $request = \Mockery::mock(Request::class);
-
-
-
-        try {
-            $controller->store($request);
-        }catch (TestException $exception){
-            $this->assertCount(1,Video::all());
         }
-
     }
 
-    public function testUpdate()
-    {
-        $category = factory(Category::class)->create();
-        $genre = factory(Genre::class)->create();
 
-        $response = $this->assertUpdate($this->sendData + ['categories_id' => [$category->id], 'genres_id' => [$genre->id]], $this->sendData + ['opened' => false]);
-        $response->assertJsonStructure([
-            'created_at', 'updated_at'
-        ]);
 
-        $category = factory(Category::class)->create();
-        $genre = factory(Genre::class)->create();
 
-        $this->assertUpdate(
-            $this->sendData + ['opened' => true , 'categories_id' => [$category->id], 'genres_id' => [$genre->id]],
-            $this->sendData + ['opened' => true]
-        );
-
-        $category = factory(Category::class)->create();
-        $genre = factory(Genre::class)->create();
-        $this->assertUpdate(
-            $this->sendData + ['rating' => Video::RATING_LIST[1], 'categories_id' => [$category->id], 'genres_id' => [$genre->id]],
-            $this->sendData + ['rating' => Video::RATING_LIST[1], 'opened' => true]
-        );
-
-    }
 
     public function testDestroy()
     {
