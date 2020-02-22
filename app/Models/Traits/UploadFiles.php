@@ -40,4 +40,16 @@ trait UploadFiles
         \Storage::delete("{$this->uploadDIr()}/{$filename}");
     }
 
+    public static function extractFiles(array &$attributes = []){
+        $files = [];
+        foreach (self::$fileFields as $file){
+            if (isset($attributes[$file]) && $attributes[$file] instanceof UploadedFile){
+                $files[] = $attributes[$file];
+                $attributes[$file] = $attributes[$file]->hashName();
+            }
+        }
+
+        return $files;
+    }
+
 }

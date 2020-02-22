@@ -34,13 +34,17 @@ class Video extends Model
 
     public $incrementing = false;
 
+    public static $fileFields = ['filme', 'banner', 'trailer'];
+
     public static function create(array $attributes = [])
     {
+        $files = self::extractFiles($attributes);
         try {
             \DB::beginTransaction();
             $obj = static::query()->create($attributes);
             static::handleRelations($obj, $attributes);
-
+            /** @var Video $obj */
+            $obj->uploadFiles($files);
             \DB::commit();
             return $obj;
         }catch (\Exception $e){

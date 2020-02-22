@@ -12,6 +12,8 @@ class UploadFilesStub extends Model
 {
     use UploadFiles;
 
+    protected  static $fileFields = ['file1', 'file2'];
+
     protected function uploadDIr()
     {
         return "1";
