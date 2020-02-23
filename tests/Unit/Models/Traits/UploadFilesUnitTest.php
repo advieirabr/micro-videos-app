@@ -2,19 +2,13 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\Category;
-use App\Models\Genre;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\UploadedFile;
 use Tests\Stubs\Models\UploadFilesStub;
 use Tests\TestCase;
-use App\Models\Traits\Uuid;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class UploadFilesUnitTest extends TestCase
 {
+
     private $obj;
 
     protected  function setUp(): void
@@ -48,7 +42,6 @@ class UploadFilesUnitTest extends TestCase
 
         \Storage::assertExists("1/{$file1->hashName()}");
         \Storage::assertExists("1/{$file2->hashName()}");
-
 
     }
 

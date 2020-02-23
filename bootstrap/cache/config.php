@@ -312,7 +312,7 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => '/opt/project/storage/app',
+        'root' => '/opt/project/storage/app/videos',
       ),
       'public' => 
       array (
