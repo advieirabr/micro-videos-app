@@ -6,6 +6,7 @@ use App\Models\Traits\UploadFiles;
 use App\Models\Traits\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Video extends Model
 {
@@ -20,7 +21,9 @@ class Video extends Model
         'year_launched',
         'opened',
         'rating',
-        'duration'
+        'duration',
+        'video_file',
+        'thumb_file'
     ];
 
     protected $dates = ['deleted_at'];
@@ -34,7 +37,7 @@ class Video extends Model
 
     public $incrementing = false;
 
-    public static $fileFields = ['video_file'];
+    public static $fileFields = ['video_file', 'thumb_file'];
 
     public static function create(array $attributes = [])
     {
@@ -49,7 +52,9 @@ class Video extends Model
             return $obj;
         }catch (\Exception $e){
             if(isset($obj)){
-                // excluir arquivos
+
+               $obj->deleteFiles($files);
+               Storage::deleteDirectory($obj->id);
             }
 
             \DB::rollBack();
@@ -59,17 +64,22 @@ class Video extends Model
 
     public function update(array $attributes = [], array $options = [])
     {
+        $files = self::extractFiles($attributes);
         try {
             \DB::beginTransaction();
             $saved = parent::update($attributes, $options);
             static::handleRelations($this, $attributes);
             if ($saved){
-//                uploads aqui
+                $this->uploadFiles($files);
             }
             \DB::commit();
+
+            if ($saved && count($files)){
+                $this->deleteOldFiles();
+            }
             return $saved;
         }catch (\Exception $e){
-            // excluir arquivos
+            $this->deleteFiles($files);
             \DB::rollBack();
             throw $e;
         }
