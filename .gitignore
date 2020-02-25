@@ -16,4 +16,4 @@ _ide_helper.php
 _ide_helper_models.php
 .phpstorm.meta.php
 /.docker/dbdata
-/storage/credentials/google/service-account-testing.json
+
