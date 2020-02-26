@@ -26,6 +26,10 @@ trait UploadFiles
 
     }
 
+    public function relativeFilePath($value) {
+        return "{$this->uploadDIr()}/{$value}";
+    }
+
 
     protected abstract function uploadDIr();
 
@@ -58,7 +62,7 @@ trait UploadFiles
      * @param string|UploadedFile $file
      */
     public function deleteFile($file){
-        $filename = $file instanceof  UploadedFile? $file->hashName() : $file;
+        $filename = $file instanceof  UploadedFile ? $file->hashName() : $file;
 
         \Storage::delete("{$this->uploadDIr()}/{$filename}");
     }
@@ -74,5 +78,10 @@ trait UploadFiles
 
         return $files;
     }
+
+    protected function getFileUrl($filename){
+        return \Storage::url($this->relativeFilePath($filename));
+    }
+
 
 }

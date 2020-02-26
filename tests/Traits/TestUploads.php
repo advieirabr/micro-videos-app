@@ -4,6 +4,7 @@
 namespace Tests\Traits;
 
 
+use App\Models\Traits\UploadFiles;
 use Illuminate\Http\UploadedFile;
 
 trait TestUploads
@@ -34,6 +35,17 @@ trait TestUploads
         }
 
 
+    }
+
+
+    protected function assertFilesExistsInStorage($model, array $files) {
+
+        /** @var UploadFiles $model*/
+
+        foreach ($files as $file){
+//            dump($file, $file->hashName());
+            \Storage::assertExists($model->relativeFilePath($file->hashName()));
+        }
     }
 
 }

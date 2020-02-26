@@ -305,7 +305,7 @@
   ),
   'filesystems' => 
   array (
-    'default' => 'local',
+    'default' => 'video_local',
     'cloud' => 's3',
     'disks' => 
     array (
@@ -313,6 +313,12 @@
       array (
         'driver' => 'local',
         'root' => '/opt/project/storage/app/videos',
+      ),
+      'video_local' => 
+      array (
+        'driver' => 'local',
+        'root' => '/opt/project/storage/app/public/videos',
+        'url' => 'http://localhost/storage/videos',
       ),
       'public' => 
       array (

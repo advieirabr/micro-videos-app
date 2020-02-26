@@ -12,7 +12,8 @@ use Tests\Exceptions\TestException;
 class VideoUploadTest extends BaseVideoTestcase
 {
 
-    public function testCreateWithFiles() {
+    public function testCreateWithFiles()
+    {
 
         \Storage::fake();
         $video = Video::create($this->data + [
@@ -24,9 +25,10 @@ class VideoUploadTest extends BaseVideoTestcase
         \Storage::assertExists("{$video->id}/{$video->video_file}");
     }
 
-    public function testCreateIfRollbackFiles() {
+    public function testCreateIfRollbackFiles()
+    {
         \Storage::fake();
-        \Event::listen(TransactionCommitted::class, function (){
+        \Event::listen(TransactionCommitted::class, function () {
             throw new TestException();
         });
 
@@ -38,7 +40,7 @@ class VideoUploadTest extends BaseVideoTestcase
                     'video_file' => UploadedFile::fake()->image("video.mp4"),
                 ]);
 
-        }catch (TestException $e){
+        } catch (TestException $e) {
             $this->assertCount(0, \Storage::allFiles());
             $hasError = true;
 
@@ -47,7 +49,8 @@ class VideoUploadTest extends BaseVideoTestcase
         $this->assertTrue($hasError);
     }
 
-    public function testUpdateWithFiles() {
+    public function testUpdateWithFiles()
+    {
         \Storage::fake();
 
         $video = factory(Video::class)->create();
@@ -75,11 +78,12 @@ class VideoUploadTest extends BaseVideoTestcase
     }
 
 
-    public function testUpdateifRollbackFiles() {
+    public function testUpdateifRollbackFiles()
+    {
         \Storage::fake();
 
         $video = factory(Video::class)->create();
-        \Event::listen(TransactionCommitted::class, function (){
+        \Event::listen(TransactionCommitted::class, function () {
             throw new TestException();
         });
 
@@ -89,12 +93,12 @@ class VideoUploadTest extends BaseVideoTestcase
         try {
 
             $video->update($this->data + [
-                'video_file' => UploadedFile::fake()->create('video.mp4'),
-                'thumb_file' => UploadedFile::fake()->image('thumb.jpg'),
+                    'video_file' => UploadedFile::fake()->create('video.mp4'),
+                    'thumb_file' => UploadedFile::fake()->image('thumb.jpg'),
 
-            ]);
+                ]);
 
-        } catch (TestException $e){
+        } catch (TestException $e) {
             $this->assertCount(0, \Storage::allFiles());
             $hasError = true;
 
@@ -104,5 +108,50 @@ class VideoUploadTest extends BaseVideoTestcase
 
 
     }
+
+    public function testFileUrlWithLocalDriver()
+    {
+        $fileFields = [];
+
+        foreach (Video::$fileFields as $field){
+            $fileFields[$field] = "$field.test";
+        }
+
+        $video = factory(Video::class)->create($fileFields);
+        $localDriver = config('filesystems.default');
+        $baseUrl = config('filesystems.disks.' . $localDriver)['url'];
+
+        foreach ($fileFields as $field => $value){
+            $fileUrl = $video->{"{$field}_url"};
+            $this->assertEquals("{$baseUrl}/$video->id/$value", $fileUrl);
+        }
+    }
+
+    public function testFileUrlsWithGcsDriver(){
+        $fileFields = [];
+
+        foreach (Video::$fileFields as $field){
+            $fileFields[$field] = "$field.test";
+        }
+
+        $video = factory(Video::class)->create($fileFields);
+        $baseUrl = config('filesystems.disks.gcs.storage_api_uri');
+        \Config::set('filesystems.default', 'gcs');
+
+        foreach ($fileFields as $field => $value){
+            $fileUrl = $video->{"{$field}_url"};
+            $this->assertEquals("{$baseUrl}/$video->id/$value", $fileUrl);
+        }
+    }
+
+    public function testFileUrlsIfNullWhenFieldsAreNull(){
+
+        $video = factory(Video::class)->create();
+        foreach (Video::$fileFields as $field){
+            $fileUrl = $video->{"{$field}_url"};
+            $this->assertNull($fileUrl);
+        }
+    }
+
 
 }
