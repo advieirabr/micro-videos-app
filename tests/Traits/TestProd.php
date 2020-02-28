@@ -6,7 +6,7 @@ namespace Tests\Traits;
 
 trait TestProd
 {
-    protected function skipTestIfNotProd($message = ''){
+    protected function skipTestIfNotProd($message = 'Somente em Produção'){
         if (!$this->isTestingProd()){
             $this->markTestSkipped($message);
         }

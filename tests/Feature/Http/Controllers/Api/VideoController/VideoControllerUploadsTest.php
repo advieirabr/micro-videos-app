@@ -58,70 +58,6 @@ class VideoControllerUploadsTest extends BaseVideoControllerTestCase
         );
     }
 
-    public function testSaveWithoutFiles(){
-
-        $testData = Arr::except($this->sendData, ['categories_id', 'genres_id']);
-
-        $data = [
-            [
-                'send_data' => $this->sendData ,
-                'test_data' => $testData + ['opened' => false]
-            ],
-            [
-                'send_data' => $this->sendData + [
-                        'opened' => true,
-                        ],
-                'test_data' => $testData + ['opened' => true]
-            ],
-            [
-                'send_data' => $this->sendData + [
-                        'rating' => Video::RATING_LIST[1],
-                    ],
-                'test_data' => $testData + ['rating' => Video::RATING_LIST[1]]
-            ]
-        ];
-
-        foreach ($data as $key => $value){
-
-            $response = $this->assertStore($value['send_data'], $value['test_data'] + ['deleted_at' => null]);
-
-            $response->assertJsonStructure([
-                'created_at',
-                'updated_at'
-            ]);
-
-            $this->assertHasCategory(
-                $response->json('id'),
-                $value['send_data']['categories_id'][0]
-            );
-
-            $this->assertHasGenre(
-                $response->json('id'),
-                $value['send_data']['genres_id'][0]
-            );
-
-            $response = $this->assertUpdate($value['send_data'], $value['test_data'] + ['deleted_at' => null]);
-
-            $response->assertJsonStructure([
-                'created_at',
-                'updated_at'
-            ]);
-
-            $this->assertHasCategory(
-                $response->json('id'),
-                $value['send_data']['categories_id'][0]
-            );
-
-            $this->assertHasGenre(
-                $response->json('id'),
-                $value['send_data']['genres_id'][0]
-            );
-
-        }
-
-
-    }
-
     public function assertHasCategory($videoId, $categoryId){
         $this->assertDatabaseHas('category_video',[
             'video_id' => $videoId,
@@ -171,14 +107,14 @@ class VideoControllerUploadsTest extends BaseVideoControllerTestCase
         $response->assertStatus(200);
         $this->assertFilesOnPersist($response, Arr::except($files, ['thumb_file', 'video_file']) + $newFiles);
 
-        $id = $response->json('id');
+        $id = $response->json('data.id');
         $video = Video::find($id);
         \Storage::assertMissing($video->relativeFilePath($files['thumb_file']->hashName()));
         \Storage::assertMissing($video->relativeFilePath($files['video_file']->hashName()));
     }
 
     public function assertFilesOnPersist(TestResponse $response, $files){
-        $id= $response->json('id');
+        $id= $response->json('id') ?? $response->json('data.id');
         $video = Video::find($id);
         $this->assertFilesExistsInStorage($video, $files);
     }
