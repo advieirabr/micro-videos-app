@@ -117,14 +117,14 @@
   </component>
   <component name="PhpInterpreters">
     <interpreters>
-      <interpreter id="9a6204ae-e58a-4d2f-98b8-ca97d0fbeca8" name="micro-videos-app_app:latest" home="docker://DATA" debugger_id="php.debugger.XDebug">
-        <remote_data DOCKER_ACCOUNT_NAME="Docker" DOCKER_IMAGE_NAME="micro-videos-app_app:latest" DOCKER_REMOTE_PROJECT_PATH="/opt/project" INTERPRETER_PATH="php" HELPERS_PATH="/opt/.phpstorm_helpers" INITIALIZED="false" VALID="true" RUN_AS_ROOT_VIA_SUDO="false" />
+      <interpreter id="794c1d8c-5db1-492a-be0d-15df6d6562c6" name="code-micro-videos_app:latest" home="docker://DATA" debugger_id="php.debugger.XDebug">
+        <remote_data DOCKER_ACCOUNT_NAME="Docker" DOCKER_IMAGE_NAME="code-micro-videos_app:latest" DOCKER_REMOTE_PROJECT_PATH="/opt/project" INTERPRETER_PATH="php" HELPERS_PATH="/opt/.phpstorm_helpers" INITIALIZED="false" VALID="true" RUN_AS_ROOT_VIA_SUDO="false" />
       </interpreter>
     </interpreters>
   </component>
   <component name="PhpInterpretersPhpInfoCache">
     <phpInfoCache>
-      <interpreter name="micro-videos-app_app:latest">
+      <interpreter name="code-micro-videos_app:latest">
         <phpinfo binary_type="PHP" php_cli="/usr/local/bin/php" path_separator=":" version="7.3.6">
           <additional_php_ini>/usr/local/etc/php/conf.d/docker-php-ext-gd.ini, /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini, /usr/local/etc/php/conf.d/docker-php-ext-sodium.ini</additional_php_ini>
           <configuration_file />
@@ -176,7 +176,7 @@
   <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />
   <component name="PhpUnit">
     <phpunit_settings>
-      <phpunit_by_interpreter interpreter_id="9a6204ae-e58a-4d2f-98b8-ca97d0fbeca8" bootstrap_file_path="/opt/project/backend/vendor/autoload.php" configuration_file_path="/opt/project/backend/phpunit.xml" custom_loader_path="/opt/project/backend/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
+      <phpunit_by_interpreter interpreter_id="794c1d8c-5db1-492a-be0d-15df6d6562c6" configuration_file_path="/opt/project/backend/vendor/autoload.php" custom_loader_path="/opt/project/backend/vendor/autoload.php" phpunit_phar_path="" />
     </phpunit_settings>
   </component>
 </project>
